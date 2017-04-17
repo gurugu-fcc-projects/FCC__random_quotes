@@ -62,6 +62,7 @@ $(document).ready(function() {
   }
 
   function generateQuote() {
+    // set up references to DOM elements
     var $quoteText = $("#quote-text"),
       $quoteAuthor = $("#quote-author");
 
