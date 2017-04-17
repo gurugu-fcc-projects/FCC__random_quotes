@@ -109,6 +109,7 @@ $(document).ready(function() {
         $quoteAuthor.html("");
       }
     });
+  }
 
   function handleClick() {
     var $quoteText = $("#quote-text"),
