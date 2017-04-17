@@ -61,53 +61,27 @@ $(document).ready(function() {
     });
   }
 
-  // function generateQuote() {
-  //   // set up references to DOM elements
-  //   var $quoteText = $("#quote-text"),
-  //     $quoteAuthor = $("#quote-author");
-  //
-  //   // get a new quote
-  //   $.getJSON("http://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=jsonp&jsonp=?", function(data) {
-  //     // insert the new quote into a corresponding placeholder
-  //     $quoteText.text(data.quoteText);
-  //     // insert the author if he exists, otherwise the placeholder will be empty
-  //     data.quoteAuthor ? $quoteAuthor.text("- " + data.quoteAuthor) : $quoteAuthor.text("");
-  //     // set a link for 'tweet' button
-  //     $("#tweet").attr("href", "https://twitter.com/intent/tweet?hashtags=quotes&related=freecodecamp&text=" + encodeURIComponent("'" + data.quoteText + "' '" + data.quoteAuthor));
-  //   }).fail(function() {
-  //     // show default message if there is an error
-  //     $quoteText.html("CONNECTION FAILURE");
-  //     $quoteAuthor.html("");
-  //   });
-  // }
-
-  // old API does not work, so now I'm using andruxnet-random-famous-quotes
   function generateQuote() {
     // set up references to DOM elements
-    var $quoteText = $("#quote-text"),
+    var url = 'https://cors-anywhere.herokuapp.com/http://api.forismatic.com/api/1.0/?method=getQuote&key=457653&format=json&lang=en',
+        $quoteText = $("#quote-text"),
         $quoteAuthor = $("#quote-author");
 
-    $.ajax({
-      headers: {
-        "X-Mashape-Key": "OivH71yd3tmshl9YKzFH7BTzBVRQp1RaKLajsnafgL2aPsfP9V",
-        Accept: "application/json",
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      url: 'https://andruxnet-random-famous-quotes.p.mashape.com/cat=',
-      success: function(response) {
-        var response = JSON.parse(response);
-        // set quote text
-        $quoteText.text(response.quote);
-        // set quote author
-        response.author ? $quoteAuthor.text("- " + response.author) : $quoteAuthor.text("");
-        // set a link for 'tweet' button
-        $("#tweet").attr("href", "https://twitter.com/intent/tweet?hashtags=quotes&related=freecodecamp&text=" + encodeURIComponent("'" + response.quote + "' '" + response.author));
-      },
-      error: function() {
-        // show default message if there is an error
-        $quoteText.html("CONNECTION FAILURE");
-        $quoteAuthor.html("");
-      }
+    // get a new quote
+    $.getJSON(url, function(data) {
+      // insert the new quote into a corresponding placeholder
+      var quote = data.quoteText,
+          author = data.quoteAuthor ? data.quoteAuthor : '';
+
+      $quoteText.html(quote);
+      // insert the author if he exists, otherwise the placeholder will be empty
+      author ? $quoteAuthor.html("- " + author) : $quoteAuthor.html("");
+      // set a link for 'tweet' button
+      $("#tweet").attr("href", "https://twitter.com/intent/tweet?hashtags=quotes&related=freecodecamp&text=" + encodeURIComponent("'" + data.quoteText + "' '" + data.quoteAuthor));
+    }).fail(function() {
+      // show default message if there is an error
+      $quoteText.html("CONNECTION FAILURE");
+      $quoteAuthor.html("");
     });
   }
 
