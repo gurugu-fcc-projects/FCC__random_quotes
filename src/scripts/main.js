@@ -1,3 +1,5 @@
+var css = require('../styles/main.scss');
+
 $(document).ready(function() {
 
   var colors = ["#FBC02D", "#5D4037", "#E64A19", "#F57C00", "#FFA000", "#455A64", "#FBC02D", "#AFB42B", "#689F38", "#388E3C", "#00796B", "#0097A7", "#0288D1", "#1976D2", "#303F9F", "#512DA8", "#7B1FA2", "#C2185B", "#D32F2F", "#616161"],
