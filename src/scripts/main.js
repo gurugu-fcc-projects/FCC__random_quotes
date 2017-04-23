@@ -1,167 +1,108 @@
-var css = require('../styles/main.scss');
-
-'use strict';
-
 $(document).ready(function() {
 
   var colors = ["#FBC02D", "#5D4037", "#E64A19", "#F57C00", "#FFA000", "#455A64", "#FBC02D", "#AFB42B", "#689F38", "#388E3C", "#00796B", "#0097A7", "#0288D1", "#1976D2", "#303F9F", "#512DA8", "#7B1FA2", "#C2185B", "#D32F2F", "#616161"],
-      oldColor = "",
-      slicedColor = "",
-      onLoadTimeOut,
-      blockButton;
+      currentColor;
 
-  $("#next-quote").on("click", handleClick);
-  firstLoad();
+  document.getElementById("next-quote").addEventListener("click", changeQuote);
+  changeQuote();
 
   function randomColor() {
-    var filteredColors,
-        randomNumber;
+    var filteredColors;
 
-    // check if this is the first load
-    if (slicedColor) {
-      // filter color array to remove the current color
+    if (currentColor) {
       filteredColors = colors.filter(function(color) {
-        return color !== slicedColor;
+        return color !== currentColor;
       });
     } else {
       filteredColors = colors;
     }
+    currentColor = filteredColors[Math.floor(Math.random() * (filteredColors.length))];
 
-    randomNumber = Math.floor(Math.random() * (filteredColors.length));
-    slicedColor = filteredColors[randomNumber];
-
-    return slicedColor;
+    return currentColor;
   }
 
-  function animateBgColor() {
-    var $circleBg = $(".circle-bg"),
-      newElement = $circleBg.clone(true);
+  function animateCircle(newColor) {
+    var circle = document.querySelector(".circle-bg");
 
-    // save color of the old circle to use later as body color
-    oldColor = $circleBg.css("background-color");
-    // generate a new color for a new circle
-    newElement.css({
-      "background-color": randomColor()
-    });
-    // start the expanding circle animation
-    $circleBg.addClass("circle-click");
+    circle.classList.add("circle-click");
+    circle.style.backgroundColor = newColor;
 
-    // change buttons color
     $("i").animate({
-      color: oldColor
+      color: newColor
     }, 600, function() {
-      // delete the old cirlce
-      $circleBg.remove();
-      // add a new circle underneath a quote circle
-      $("#wrapper").append(newElement);
-      // change body bg-color to that of the old circle
-      $("body").css({
-        "background-color": oldColor
+      circle.classList.remove("circle-click");
+      document.querySelector("body").style.backgroundColor = newColor;
+    });
+  }
+
+  function hideQuote() {
+    document.querySelector("#quote-text").textContent.length > 0
+      ? document.querySelector("#quote").style.opacity = 0
+      : null
+  }
+
+  function setQuote(data) {
+    //--- set quote text
+    document.querySelector("#quote-text").textContent = data.quoteText;
+    //--- set quote author
+    data.quoteAuthor
+      ? document.querySelector("#quote-author").textContent = "- " + data.quoteAuthor
+      : document.querySelector("#quote-author").textContent = "(unknown author)";
+    //--- set twitter link
+    document.querySelector("#tweet").setAttribute("href", "https://twitter.com/intent/tweet?hashtags=quotes&related=freecodecamp&text=" + encodeURIComponent("'" + data.quoteText + "' '" + data.quoteAuthor));
+  }
+
+  function setQuoteColor(color) {
+    document.querySelector("#quote").style.color = color;
+  }
+
+  function showQuote() {
+    document.querySelector("#quote").style.opacity = 1
+  }
+
+  function changeQuote() {
+    var url = 'https://cors-anywhere.herokuapp.com/http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en';
+
+    //--- disable NEXT QUOTE button
+    document.getElementById("next-quote").setAttribute("disabled", "disabled");
+    //--- enable NEXT QUOTE button
+    setTimeout(function() {
+      document.getElementById("next-quote").removeAttribute("disabled");
+    }, 1100);
+
+    //--- reach for the next quote
+    axios({
+        method:'GET',
+        url: url,
+      })
+      .then(function(response) {
+        //--- handle incorrectly escaped apostrophe in a quote
+        if (typeof response.data == "string") {
+          return JSON.parse(response.data.replace(/(\\')/g, "'"))
+        }
+        return response.data;
+      })
+      .then(function(responseData) {
+        hideQuote();
+
+        return responseData;
+      })
+      .then(function(responseData) {
+        var newColor = randomColor();
+
+        setQuote(responseData);
+        setQuoteColor(newColor);
+
+        return newColor;
+      })
+      .then(function(newColor) {
+        animateCircle(newColor);
+        showQuote();
+      })
+      .catch(function(error) {
+        document.querySelector("#quote-text").textContent = "Error: " + error;
+        document.querySelector("#quote-author").textContent = "";
       });
-    });
-  }
-
-  function generateQuote() {
-    // set up references to DOM elements
-    var url = 'https://cors-anywhere.herokuapp.com/http://api.forismatic.com/api/1.0/?method=getQuote&key=457653&format=json&lang=en',
-        $quoteText = $("#quote-text"),
-        $quoteAuthor = $("#quote-author");
-
-    // get a new quote
-    $.getJSON(url, function(data) {
-      // insert the new quote into a corresponding placeholder
-      var quote = data.quoteText,
-          author = data.quoteAuthor ? data.quoteAuthor : '';
-
-      $quoteText.html(quote);
-      // insert the author if he exists, otherwise the placeholder will be empty
-      author ? $quoteAuthor.html("- " + author) : $quoteAuthor.html("");
-      // set a link for 'tweet' button
-      $("#tweet").attr("href", "https://twitter.com/intent/tweet?hashtags=quotes&related=freecodecamp&text=" + encodeURIComponent("'" + data.quoteText + "' '" + data.quoteAuthor));
-    }).fail(function() {
-      // show default message if there is an error
-      $quoteText.html("CONNECTION FAILURE");
-      $quoteAuthor.html("");
-    });
-  }
-
-  function handleClick() {
-    var $quoteText = $("#quote-text"),
-      $quoteAuthor = $("#quote-author");
-
-    // block 'next quote' button while there is still animation going on
-    if (onLoadTimeOut || blockButton) {
-      return null;
-    } else {
-      // block 'next quote' button until all animations are over
-      blockButton = true;
-      // hide current quote and its author
-      $quoteText.animate({
-        opacity: 0
-      }, 800);
-      $quoteAuthor.animate({
-        opacity: 0
-      }, 800, function() {
-        // set the expanding circle animation
-        animateBgColor();
-        // get a new quote
-        generateQuote();
-        // set a new color for the quote and author
-        $quoteText.css({
-          "color": oldColor
-        });
-        $quoteAuthor.css({
-          "color": oldColor
-        });
-        // show new quote and its quthor
-        $quoteText.animate({
-          opacity: 1
-        }, 800);
-        $quoteAuthor.animate({
-          opacity: 1
-        }, 800, function() {
-          // unblock 'next quote' button
-          blockButton = false;
-        });
-      });
-    }
-  }
-
-  function firstLoad() {
-    var mainColor = randomColor(),
-      $quoteText = $("#quote-text"),
-      $quoteAuthor = $("#quote-author");
-
-    // get a new quote
-    generateQuote();
-    // animate color change for background and text elements (first load)
-    $("body").animate({
-      backgroundColor: mainColor,
-      color: mainColor
-    });
-    $("i").animate({
-      color: mainColor
-    });
-    // generate a new color for the hidden expanding circle
-    $(".circle-bg").animate({
-      backgroundColor: randomColor()
-    });
-
-    // show text elements only after a new quote is loaded and all animations are finished
-    onLoadTimeOut = window.setTimeout(
-      function() {
-        $("i").animate({
-          opacity: 1
-        }, 800);
-        $quoteText.animate({
-          opacity: 1
-        }, 800);
-        $quoteAuthor.animate({
-          opacity: 1
-        }, 800);
-        // unblock 'next quote' button
-        onLoadTimeOut = 0;
-      }, 800);
   }
 
 });
