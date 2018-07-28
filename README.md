@@ -17,4 +17,4 @@ I remember it was a hard case for me because right from the start I saw this exa
 
 ## Video Walkthrough
 
-![](https://github.com/gurugumawaru/FCC_StephenKingTribute/blob/master/fcc_random_quote_machine.gif)
+![](https://github.com/gurugumawaru/FCC_random_quotes/blob/master/fcc_random_quote_machine.gif)
