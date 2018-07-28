@@ -4,18 +4,18 @@
 }
 
 body {
-  background-color: #303F9F;
-  font-family: 'Josefin Sans', sans-serif;
-  color: #303F9F;
+  background-color: #303f9f;
+  font-family: "Josefin Sans", sans-serif;
+  color: #303f9f;
   overflow: hidden;
 }
 
 a {
-  color: #303F9F;
+  color: #303f9f;
   text-decoration: none;
   opacity: 0.3;
   cursor: pointer;
-  transition: opacity .5s;
+  transition: opacity 0.5s;
   &:hover {
     opacity: 1;
   }
@@ -35,20 +35,26 @@ a {
   transition: transform 1.7s;
   z-index: 899;
   margin: auto;
-  top: 0; left: 0; bottom: 0; right: 0;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 
 #circle-text {
   display: table-cell;
   vertical-align: middle;
   position: absolute;
-  background-color: rgba(255,255,255,1);
+  background-color: rgba(255, 255, 255, 1);
   border-radius: 100%;
   width: 320px;
   height: 320px;
   z-index: 999;
   margin: auto;
-  top: 0; left: 0; bottom: 0; right: 0;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 
 #quote {
@@ -82,8 +88,8 @@ a {
   a {
     padding: 10px;
     i {
-      opacity: 1;
-      transition: transform .5s;
+      opacity: 0;
+      transition: transform 0.5s;
       &.fa-twitter {
         font-size: 2em;
       }
@@ -95,5 +101,5 @@ a {
 }
 
 .circle-click {
-  transform: scale(20.0);
+  transform: scale(20);
 }
