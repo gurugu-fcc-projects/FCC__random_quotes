@@ -12,7 +12,7 @@ I remember it was a hard case for me because right from the start I saw this exa
 ## Links
 
 - [ ] this project at codepen: [https://codepen.io/GuRuGu/full/grQrdL/](https://codepen.io/GuRuGu/full/grQrdL/)
-- [ ] this project at gh-pages: [https://gurugumawaru.github.io/FCC_random_quotes/](https://gurugumawaru.github.io/FCC_random_quotes/)
+- [ ] this project at gh-pages: [https://gurugu-fcc-projects.github.io/FCC__random_quotes/](https://gurugu-fcc-projects.github.io/FCC__random_quotes/)
 - [ ] freecodecamp challenge: [https://learn.freecodecamp.org/front-end-libraries/front-end-libraries-projects/build-a-random-quote-machine](https://learn.freecodecamp.org/front-end-libraries/front-end-libraries-projects/build-a-random-quote-machine)
 
 ## Video Walkthrough
